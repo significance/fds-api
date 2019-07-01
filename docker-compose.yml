@@ -1,0 +1,85 @@
+version: "3"
+services:
+  express:
+    hostname: express
+    # environment:
+    #   - address=${ADDRESS}
+    build:
+      context: ./fds-express
+      # args:
+      #   privatekey: ${PRIVATE_KEY}
+      #   password: ${PASSWORD}
+    restart: always     
+    container_name: express
+    ports:
+      - 127.0.0.1:8090:8080     
+    healthcheck:
+      test: wget http://localhost:8080
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+     - user-data:/usr/src/app/scratch
+    networks:
+      chainnet:
+        ipv4_address: 172.26.0.110
+
+  # redis:
+  #   hostname: redis
+  #   environment:
+  #     - address=${ADDRESS}
+  #   build:
+  #     context: ./redis
+  #     # args:
+  #     #   privatekey: ${PRIVATE_KEY}
+  #     #   password: ${PASSWORD}
+  #   restart: always         
+  #   container_name: redis
+  #   ports:
+  #     - 127.0.0.1:6379:6379
+  #     # - 127.0.0.1:30399:30399/udp
+  #   volumes:
+  #    - redis-data:/data
+  #   networks:
+  #     chainnet:
+  #       ipv4_address: 172.25.0.111
+
+  nginx:
+    hostname: nginx
+    build:
+      context: ./nginx
+    restart: always       
+    container_name: nginx    
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certs-data:/etc/letsencrypt
+      - certs-www:/var/www/certbot
+    networks:
+       chainnet:
+          ipv4_address: 172.26.0.120
+
+  certbot:
+    hostname: certbot
+    image: certbot/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; echo \"Starting cert renew process\" ; while :; do echo \"Renewing certificate\" ; certbot renew; sleep 12h ; done;'"
+    container_name: certbot
+    volumes:
+      - certs-data:/etc/letsencrypt
+      - certs-www:/var/www/certbot
+    networks:
+       chainnet:
+          ipv4_address: 172.26.0.121
+
+networks:
+  chainnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.26.0.0/24
+
+volumes:
+  user-data:
+  certs-data:
+  certs-www:
