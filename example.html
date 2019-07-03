@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script type="text/javascript"/ src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
+  <script type="text/javascript">
+    let randomNumber = Math.floor(Math.random() * 101010101);
+    let token;
+    let subdomain = "test"+randomNumber;
+    // this will take at least 10s!
+    let createAccount = async (subdomain) => {
+      let response = await axios({
+        method: 'post',
+        url: 'https://api-noordung.fairdatasociety.org/account/create',
+        data: {
+          subdomain: subdomain
+        }
+      });
+      token = response.data.token;
+    }
+
+    let storeValue = async (key, value) => {
+      let response = await axios({
+        method: 'post',
+        url: 'https://api-noordung.fairdatasociety.org/value/store',
+        data: {
+          subdomain: subdomain,
+          token: token,
+          key: key,
+          value: value
+        }
+      });
+      console.log(response.data.value);
+    } 
+
+    let retrieveValue = async (key, value) => {
+      let response = await axios({
+        method: 'get',
+        url: 'https://api-noordung.fairdatasociety.org/value/retrieve',
+        params: {
+          subdomain: subdomain,
+          token: token,
+          key: key
+        }
+      });
+      console.log(response.data.value);
+    }    
+
+    let examples = async () => {
+      await createAccount(subdomain);
+      await storeValue('test-key', 'test222');
+      await retrieveValue('test-key');
+    }
+
+    examples();
+
+  </script>
+</head>
+<body>
+
+</body>
+</html>
