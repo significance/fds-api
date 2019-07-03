@@ -25,3 +25,11 @@ Stores a string value.
 Retreives the string.
 
 `curl "https://api-noordung.fairdatasociety.org/value/retrieve?subdomain=test23423423423223223&token=b8ec402c4321425cac5b1e04b415e4c53fb9db80c639625af0891d56eb50c725&key=test"`
+
+
+### Development
+
+Run node server locally for development.
+
+`cd fds-express`
+`node index.js`
