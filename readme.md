@@ -12,7 +12,7 @@
 
 `curl -XPOST https://api-noordung.fairdatasociety.org/account/create --data "subdomain=test23423423423223223"`
 
-You will receive a token which you must then submit with each requests for authentication.
+You will receive a token which you must then submit with each request for authentication.
 
 #### Store Value
 
