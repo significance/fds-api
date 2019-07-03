@@ -32,11 +32,11 @@ const port = '8090';
 var storage = multer.memoryStorage();
 var upload = multer({ storage: storage });
 
-// var redis = require('redis');
-// var client = redis.createClient(process.env.REDIS_URL);
-// console.log(process.env.REDIS_URL)
+app.use(bodyParser.json({ extended: false }));
+app.use(cors());
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ type: 'application/json;charset=UTF-8' }))
+app.use(bodyParser.urlencoded({ type: 'application/x-www-form-urlencoded' }))
 app.use(cors());
 
 let fds = require('fds.js');
@@ -78,7 +78,7 @@ app.post('/value/store', (req, res) => {
   let key = req.body.key;
   let value = req.body.value;
   let token = req.body.token;
-  console.log(subdomain, key, value, token)
+
   FDS.UnlockAccount(subdomain, token).then( account =>{
     account.storeValue(key, value).then((resp)=>{
       res.send({
@@ -129,7 +129,6 @@ app.post('/files/store', upload.single('file'), (req, res) => {
       });
     });
   }).catch(error => {
-    console.log(error)
     res.status(500).send({
       success: false,
       error: error.toString()
